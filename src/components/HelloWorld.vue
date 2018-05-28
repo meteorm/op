@@ -10,6 +10,7 @@
         <option value="LineString">LineString</option>
         <option value="Polygon">Polygon</option>
         <option value="Circle">Circle</option>
+        <option value="Rect">Rect</option>
       </select>
     </form>
 </div>
@@ -67,10 +68,45 @@ var raster = new ol.layer.Tile({
       var typeSelect = document.getElementById('type');
 
       function addInteractions() {
-        draw = new ol.interaction.Draw({
-          source: source,
-          type: typeSelect.value
-        });
+        if(typeSelect.value==='Rect'){
+          draw = new ol.interaction.Draw({
+              source: source,
+              type: 'LineString',
+              style: new ol.style.Style({
+                  fill: new ol.style.Fill({
+                      color: 'rgba(255, 255, 255, 0.2)'
+                  }),
+                  stroke: new ol.style.Stroke({
+                      color: '#ffcc33',
+                      width: 2
+                  }),
+                  image: new ol.style.Circle({
+                      radius: 7,
+                      fill: new ol.style.Fill({
+                          color: '#ffcc33'
+                      })
+                  })
+              }),
+              maxPoints: 2,
+              geometryFunction: function(coordinates, geometry){
+                  if(!geometry){
+                      geometry = new ol.geom.Polygon(null);
+                  }
+                  var start = coordinates[0];
+                  var end = coordinates[1];
+                  geometry.setCoordinates([
+                      [start, [start[0], end[1]], end, [end[0], start[1]], start]
+                  ]);
+                  return geometry;
+              }
+          })
+        }else{
+          draw = new ol.interaction.Draw({
+            source: source,
+            type: typeSelect.value
+          });
+        }
+        
         map.addInteraction(draw);
         snap = new ol.interaction.Snap({source: source});
         map.addInteraction(snap);
