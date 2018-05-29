@@ -140,6 +140,7 @@ var raster = new ol.layer.Tile({
         var features = source.getFeatures();  
           if(features.length>0){  
              for(var j=0;j<features.length;j++){  
+               console.log(features[j].getGeometry().getType());
                 if(features[j].getGeometry().getType()=="LineString"){  
                    var Line = features[j];  
                    var Points = Line.getGeometry().getCoordinates();  
@@ -152,7 +153,9 @@ var raster = new ol.layer.Tile({
                   //           return Line;  
                   //       }  
                   //   }  
-                }  
+                }else if(features[j].getGeometry().getType()=="Polygon"){
+                  //TODO: 多边形 或者矩形
+                }
              } 
           }
         })
